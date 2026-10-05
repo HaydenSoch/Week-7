@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+<meta charset="UTF-8">
+<title>Randomer Numbers Yes</title>
+</html>
+<body>
+    <button id="generateBtn">Generate Random Number</button>
+    <p>Your number:<span id="numberDisplay">0</span></p>
+    <script>
+            const button = document.getElementById('generateBtn');
+            const display = document.getElementById('numberDisplay');
+
+            button.addEventListener('click', () => {
+                const randomNumber = Math.floor(Math.random()*100)+1;
+
+                display.textContent = randomNumber;
+
+            });
+    </script>
+</body>
+</html>
