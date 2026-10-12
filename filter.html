@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content ="width=device-width, initial-scale=1.0">
+<title>AHHHHHH LOW PASSS AHHHHHHHHHHH</title>
+</head>
+<body>
+    <button id="startButton">Start</button>
+    <button id="stopButton">Stop</button>
+    <div id="result">AHHHHHH LOW PASSS AHHHHHHHHHHH</div>
+    
+    <script>
+
+    function Startsound(){
+
+    const ctx = new AudioContext();
+    const mainOsc = new OscillatorNode(ctx);
+    mainOsc.type = 'sawtooth';
+    mainOsc.frequency.value = 55;
+
+    //lowpass
+    const lpFilter = new BiquadFilterNode(ctx);
+    lpFilter.type = 'lowpass';
+    lpFilter.frequency = 1000
+    lpFilter.Q = 8
+
+    //LFO
+    const lfo = new OscillatorNode(ctx);
+    lfo.type = 'sine';
+    lfo.frequency.value = 1
+
+    const lfoDepth = ctx.createGain();
+    lfoDepth.gain.setValueAtTime(500, ctx.currentTime);
+
+    lfo.connect(lfoDepth);
+    lfoDepth.connect(lpFilter.frequency);
+
+    mainOsc.connect(lpFilter);
+    lpFilter.connect(ctx.destination);
+    mainOsc.start();
+    lfo.start();
+    }
+
+    function Stopsound(){
+    mainOsc.stop();
+    lfo.stop();   
+    }
+
+    document.querySelector("#startButton").onclick = () => Startsound();
+    document.querySelector("#stopButton").onclick = () => Stopsound();
+    </script>
+    </body>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content ="width=device-width, initial-scale=1.0">
+<title>Randomer Pitches Yes</title>
+</head>
+<body>
+    <button id="pickButton">Pick Random Note</button>
+    <div id="result">Click the button to start!</div>
+
+    <script>
+            //define the array of choices
+            const midiPitches = [60, 62, 63, 67, 69, 72];
+
+            //create the random picker function
+            const randomPitch = function(){
+                let randomMidiNote = midiPitches[Math.floor(Math.random() * midiPitches.length)];
+                let newFreq = 440 * 2 ** ((randomMidiNote - 69) / 12);
+                return newFreq;
+            }
+            //random wave
+            const waveArray = ["triangle", "sawtooth", "sine", "square"]
+            const randomWave = function (){
+                let RandWavelength = waveArray[Math.floor(Math.random() * waveArray.length)];
+                return RandWavelength
+            }
+            //random dur
+            const durArray = [0.125, 0.5, 0.75, 1, 1.25, 2, 4]
+            const randomDur = function (){
+                let RandNoteLength = durArray[Math.floor(Math.random() * durArray.length)];
+                return RandNoteLength
+            }            
+            //set up references to the HTMl elements
+            const button = document.getElementById("pickButton");
+            const resultDisplay = document.getElementById("result");
+
+            //Trigger the function on click and print the result
+            button.addEventListener("click", function(){
+                const randomChoice = randomPitch(midiPitches);
+                resultDisplay.textContent = randomChoice;
+            });
+
+            const myCtx = new AudioContext();
+
+            function playNote1(someContext, frequency, duration)
+        {
+            const osc1 = new OscillatorNode(someContext);
+            const osc2 = new OscillatorNode(someContext);
+            const osc3 = new OscillatorNode(someContext);
+            
+            const gain1 = new GainNode(someContext);
+            
+            osc1.frequency.value = frequency;
+            osc2.frequency.value = frequency*1.3;
+            osc3.frequency.value = frequency*1.6;
+
+            osc1.type = randomWave()
+            osc2.type = randomWave()
+            osc3.type = randomWave()
+
+            gain1.gain.value = 0;
+
+            osc1.connect(gain1).connect(someContext.destination);
+            osc2.connect(gain1).connect(someContext.destination);
+            osc3.connect(gain1).connect(someContext.destination);
+
+            let now = someContext.currentTime;
+
+            gain1.gain.exponentialRampToValueAtTime(0.30, now + 0.01); //attack
+            gain1.gain.exponentialRampToValueAtTime(0.15, now + 0.01 + 0.08) //decay
+            gain1.gain.exponentialRampToValueAtTime(0.1, now + 0.01 + 0.08 + 0.9)
+            gain1.gain.exponentialRampToValueAtTime(0.001, now + duration); //release
+
+            osc1.start();
+            osc1.stop(now + duration);
+
+            osc2.start();
+            osc2.stop(now + duration);
+
+            osc3.start();
+            osc3.stop(now + duration);
+        }
+
+        document.querySelector("#pickButton").onclick = () => playNote1(myCtx, randomPitch(), randomDur());
+    </script>
+</body>
+</html>
